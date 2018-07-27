@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+ <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+
+ <title>ChatBox-Login</title>
+
+ <style>
+ 	div {
+ 		margin-top: 30vh;
+ 		margin-left: 40vw;
+ 		width: 20vw;
+ 		text-align: center;
+ 		border-style: groove;
+ 		font-family: "Indie Flower";
+ 	}
+
+ 	button {
+ 		background-color: #fff;
+ 		color: #008CBA;
+ 		border: 2px solid #008CBA;
+
+ 	}
+ </style>
+</head>
+<body>
+	<div>
+		<h2>Login For ChatBox</h2>
+		<br>
+		<h3>Enter your name : </h3>
+			<form action="">
+				<input id="name" autocomplete="off"/><br><br><button onclick="location.href='chat';">Go!</button>
+			</form>
+		<br><br>
+	</div>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+	<script>
+		$(function () {
+			var login_socket = io();
+			$('form').submit(function() {
+				login_socket.emit('Login User', $('#name').val());
+				return false;
+			});
+		});
+	</script>
+</body>
+</html>
