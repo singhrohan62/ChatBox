@@ -4,6 +4,8 @@ var http = require('http').Server(app);
 
 var io = require('socket.io')(http);
 
+var users = [];
+
 var user_name = '';
 
 app.get('/', function (req, res) {
@@ -20,6 +22,9 @@ io.on('connection', function (socket) {
 	socket.on('Login User',function (username) {
 		console.log(username+' connected');
 		user_name = username;
+		 users.push(user_name);
+		 console.log(users);
+		 io.emit('Users Connected',users);
 	});
 
 	socket.on('Chat Message', function (msg) {
