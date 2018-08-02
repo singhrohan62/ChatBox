@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 
 var io = require('socket.io')(http);
 
-var users = [];
+var users = {};
 
 var user_name = '';
 
@@ -20,16 +20,21 @@ io.on('connection', function (socket) {
 	console.log('connected');
 
 	socket.on('Login User',function (username) {
-		console.log(username+' connected');
 		user_name = username;
-		 users.push(user_name);
-		 console.log(users);
-		 io.emit('Users Connected',users);
+		users[socket.id] = username
+		console.log('user when logged in : '+ user_name);
+		io.emit('Users Connected',users);
 	});
 
 	socket.on('Chat Message', function (msg) {
-		console.log(user_name+' texts : '+msg);
-		io.emit('Chat Message', msg, user_name);
+		console.log('username passed : '+ users[socket.id]);
+		console.log(users);
+		console.log(socket.id);
+		console.log(users[socket.id]);
+		user_name = users[socket.id];
+		console.log(users[socket.id]+' texts : '+msg);
+		io.emit('Chat Message Show', msg, users[socket.id]);
+		// io.emit('Chat Message', msg, user_name);
 	});
 
 	socket.on('disconnect',function () {

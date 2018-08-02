@@ -16,34 +16,74 @@
  		font-family: "Indie Flower";
  	}
 
- 	button {
+ 	.login {
  		background-color: #fff;
  		color: #008CBA;
  		border: 2px solid #008CBA;
 
  	}
+ 	 * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form.msg { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input.msg { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      button.msg{ width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+
  </style>
 </head>
 <body>
-	<div>
+	<div id="login-box">
 		<h2>Login For ChatBox</h2>
 		<br>
 		<h3>Enter your name : </h3>
-			<form action="">
-				<input id="name" autocomplete="off"/><br><br><button onclick="location.href='chat';">Go!</button>
+			<form id="name-form" action="">
+				<input id="name" autocomplete="off"/><br><br><button class="login">Go!</button>
 			</form>
 		<br><br>
+	</div>
+
+	<div id="chat-box" style="display: none;">
+		<div id="users"></div>
+		<div id="user"></div>
+		<ul id="messages"></ul>
+		<form class = "msg" id="msg-form" action="">
+			<input id="m" class="msg" autocomplete="off" /><button class="msg">Send</button>
+		</form>
 	</div>
 
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
 		$(function () {
-			var login_socket = io();
-			$('form').submit(function() {
-				login_socket.emit('Login User', $('#name').val());
+			var socket = io();
+			var username = '';
+			$('#name-form').submit(function() {
+				socket.emit('Login User', $('#name').val());
+				document.getElementById("login-box").style.display = 'none';
+				document.getElementById("chat-box").style.display = 'inline';
 				return false;
 			});
+
+			socket.on('Users Connected',function (users, user_name) {
+				username = user_name;
+				console.log('aaads'+username);
+				$('#users').text('Connected Users: '+users+" "+username);
+			})
+
+			$('#msg-form').submit(function() {
+				socket.emit('Chat Message', $('#m').val(), username);
+				//$('#user').text('username : '+ username);
+				//'Chat Message' is the name of the event and '$('#m').val()' is the value of input
+				$('#m').val('');
+				//Here, we assign the input value to be '' (ie empty string)
+				return false;
+			});
+
+			 socket.on('Chat Message Show', function(msg, user){
+      			$('#messages').append($('<li>').text(user + ':' +msg));
+    		});
 		});
 	</script>
 </body>
