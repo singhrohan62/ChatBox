@@ -6,6 +6,8 @@ var io = require('socket.io')(http);
 
 var users = {};
 
+var usernames = [];
+
 var user_name = '';
 
 app.get('/', function (req, res) {
@@ -21,9 +23,11 @@ io.on('connection', function (socket) {
 
 	socket.on('Login User',function (username) {
 		user_name = username;
-		users[socket.id] = username
+		users[socket.id] = username;
+		usernames.push(username);
 		console.log('user when logged in : '+ user_name);
-		io.emit('Users Connected',users);
+		console.log(users);
+		io.emit('Users Connected',usernames);
 	});
 
 	socket.on('Chat Message', function (msg) {

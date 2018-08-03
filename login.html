@@ -7,12 +7,19 @@
  <title>ChatBox-Login</title>
 
  <style>
- 	div {
+ 	#login-box {
  		margin-top: 30vh;
  		margin-left: 40vw;
  		width: 20vw;
  		text-align: center;
  		border-style: groove;
+ 		font-family: "Indie Flower";
+ 	}
+
+ 	div.chatwindow {
+ 		border-style: groove;
+ 		width: 49vw;
+ 		height: 100vh;
  		font-family: "Indie Flower";
  	}
 
@@ -23,11 +30,11 @@
 
  	}
  	 * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
+      
       form.msg { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input.msg { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
       button.msg{ width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages { list-style-type: none; margin: 0; padding: 0; font-size: 18px;font-weight: 400}
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
 
@@ -37,20 +44,23 @@
 	<div id="login-box">
 		<h2>Login For ChatBox</h2>
 		<br>
-		<h3>Enter your name : </h3>
+		<h3>Enter your name : </h3><br><br>
 			<form id="name-form" action="">
 				<input id="name" autocomplete="off"/><br><br><button class="login">Go!</button>
 			</form>
 		<br><br>
 	</div>
 
-	<div id="chat-box" style="display: none;">
-		<div id="users"></div>
-		<div id="user"></div>
+	<div id="chat-box" class="chatwindow" style="display: none;float: left">
+		<!--<div id="users"></div>-->
 		<ul id="messages"></ul>
-		<form class = "msg" id="msg-form" action="">
+		<form id="msg-form" class="msg" action="">
 			<input id="m" class="msg" autocomplete="off" /><button class="msg">Send</button>
 		</form>
+	</div>
+
+	<div id="users" class="chatwindow" style="display: none;float: right;">
+		<h3>Connected Users</h3><br><br>
 	</div>
 
 	<script src="/socket.io/socket.io.js"></script>
@@ -58,22 +68,22 @@
 	<script>
 		$(function () {
 			var socket = io();
-			var username = '';
+			//var username = '';
 			$('#name-form').submit(function() {
 				socket.emit('Login User', $('#name').val());
 				document.getElementById("login-box").style.display = 'none';
-				document.getElementById("chat-box").style.display = 'inline';
+				document.getElementById("chat-box").style.display = 'block';
+				document.getElementById("users").style.display = 'block';
 				return false;
 			});
 
-			socket.on('Users Connected',function (users, user_name) {
-				username = user_name;
-				console.log('aaads'+username);
-				$('#users').text('Connected Users: '+users+" "+username);
+			socket.on('Users Connected',function (users) {
+				console.log('users : '+ users);
+				$('#users').text(users);
 			})
 
 			$('#msg-form').submit(function() {
-				socket.emit('Chat Message', $('#m').val(), username);
+				socket.emit('Chat Message', $('#m').val());
 				//$('#user').text('username : '+ username);
 				//'Chat Message' is the name of the event and '$('#m').val()' is the value of input
 				$('#m').val('');
@@ -82,7 +92,7 @@
 			});
 
 			 socket.on('Chat Message Show', function(msg, user){
-      			$('#messages').append($('<li>').text(user + ':' +msg));
+      			$('#messages').append($('<li>').text(user + ' : ' +msg));
     		});
 		});
 	</script>
