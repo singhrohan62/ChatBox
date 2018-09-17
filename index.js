@@ -14,10 +14,6 @@ app.get('/', function (req, res) {
 	res.sendFile(__dirname + '/login.html');
 });
 
-app.get('/chat',function (req, res) {
-	res.sendFile(__dirname + '/index.html');
-})
-
 io.on('connection', function (socket) {
 	console.log('connected');
 
@@ -42,10 +38,11 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('disconnect',function () {
-		console.log('user disconnected');
+
+		console.log('user disconnected '+users[socket.id]);
 	});
 });
 
-http.listen(3000, function () {
-	console.log('listening on port: 3000');
+http.listen(4001, function () {
+	console.log('listening on port: 4001');
 });
